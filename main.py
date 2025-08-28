@@ -12,6 +12,7 @@ if __name__ == "__main__":
         time.sleep(5)  # visení
         tello.land()
         print("Drone landed")
+        #drone_controller.main_loop(tello)
     finally:
         try:
             tello.end()
