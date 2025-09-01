@@ -40,7 +40,7 @@ def main_loop(tello, frame_reader):
     running = True
     while steps < MAX_STEPS and running:
         try:
-            tello.move_forward(STEP_LENGTH)
+            move_forward(tello, STEP_LENGTH)
             time.sleep(2)
             steps = steps + 1
         except TelloException as e:
@@ -89,9 +89,9 @@ def fly(height, tello):
 # tello - instance dronu
 def turn(direction, angle, tello):
     if direction == "left":
-            tello.rotate_clockwise(angle)
-    elif direction == "right":
         tello.rotate_counter_clockwise(angle)
+    elif direction == "right":
+        tello.rotate_clockwise(angle)
 
 # Funkce pro otoceni dronu o 90 stupnu vpravo
 # param:
@@ -110,3 +110,65 @@ def turn_left(tello):
 # tello - instance dronu
 def land(tello):
     tello.land()
+    
+def move_forward(tello, length):
+    try:
+        tello.move_forward(length)
+        print(f"Dron se posunul dopředu o {length} cm.")
+    except Exception as e:
+        print(f"Chyba při posunu dopředu: {e}")
+        
+def move_back(tello, length):
+    try:
+        tello.move_back(length)
+        print(f"Dron se posunul dozadu o {length} cm.")
+    except Exception as e:
+        print(f"Chyba při posunu dozadu: {e}")
+        
+# Funkce: let dopředu a pokus o načtení QR před dronem
+# param:
+#   tello - instance dronu Tello
+#   frame_reader - objekt z tello.get_frame_read(), poskytuje aktuální snímek v .frame
+#   length_cm - vzdálenost v cm, o kterou má dron popoletět dopředu
+#   scan_timeout_s - kolik sekund po doletu zkoušet detekovat QR
+#   sleep_step_s - pauza mezi čtením frame (šetrnější k CPU)
+# return:
+#   True  -> pokud se během čtení QR provedl příkaz, který misi ukončil (např. přistání)
+#   False -> pokud QR nebyl nalezen / neukončil misi
+def forward_and_scan_qr(tello: Tello, frame_reader, length_cm: int, scan_timeout_s: float = 6.0, sleep_step_s: float = 0.05) -> bool:
+    try:
+        tello.move_forward(int(length_cm))
+        print(f"[Mise] Letím vpřed o {int(length_cm)} cm, pak hledám QR…")
+    except Exception as e:
+        print(f"[Mise] Chyba při letu vpřed: {e}")
+        # když se nepodaří popoletět, i tak zkus krátce číst QR (třeba už nějaký je před námi)
+
+    deadline = time.time() + float(scan_timeout_s)
+    ended = False
+
+    while time.time() < deadline:
+        print("Zkousim cist qr")
+        frame = getattr(frame_reader, "frame", None)
+        if frame is None:
+            print("Cteni bylo neuspesne")
+            time.sleep(sleep_step_s)
+            continue
+
+        # převedeme na numpy (šedotón) a zkusíme přečíst QR
+        gray = qr_reader.img_to_np_array(frame)
+        data = qr_reader.read(gray, draw=False, show=False)
+
+        if data:
+            print(f"[QR] Nalezen QR obsah: {data}")
+            # zareaguj na QR – pokud přistál, ukonči
+            if react_to_qr(tello, data):
+                ended = True
+                break
+            if data == "VPRAVO":
+                move_forward(tello, 100)
+            # krátká pauza po akci (např. otočka), ať se stabilizuje
+            time.sleep(1.0)
+
+        time.sleep(sleep_step_s)
+
+    return ended

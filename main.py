@@ -4,17 +4,18 @@ from djitellopy import Tello, TelloException
 
 if __name__ == "__main__":
     tello = Tello()
-    try:
-        drone_controller.fly(20, tello)
-        time.sleep(3)
-        tello.move_up(20)
-        print("Drone started")
-        time.sleep(5)  # visení
+    tello.connect()
+    tello.streamon()
+    frame_reader = tello.get_frame_read()
+
+    tello.takeoff()
+    tello.move_up(60)  # aby kamera lépe viděla
+
+    # Popoletí vpřed 200 cm a ~6s se snaží načíst QR
+    ukonceno = drone_controller.forward_and_scan_qr(tello, frame_reader, length_cm=180, scan_timeout_s=6.0)
+
+    if not ukonceno:
+        # QR nic “konečného” neudělal (např. nepřistál) → udělej, co chceš dál
         tello.land()
-        print("Drone landed")
-        #drone_controller.main_loop(tello)
-    finally:
-        try:
-            tello.end()
-        except Exception:
-            pass
+    tello.streamoff()
+    tello.end()
