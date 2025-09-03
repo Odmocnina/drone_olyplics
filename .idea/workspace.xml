@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8a2ff75a-0bae-40db-b097-df8b95749d4c" name="Changes" comment="">
+    <list default="true" id="8a2ff75a-0bae-40db-b097-df8b95749d4c" name="Changes" comment="konttrae a hlavni cyklus, asi by to i melo byt, ted jen zprovoznit ten dron">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drone_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/drone_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drone_running.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/qr_manager.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/qr_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/qr_reader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,23 +33,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.drone_controller.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.qr_reader.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/Michael/Documents/prace/ovladani_dronu",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.drone_controller.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.qr_reader.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Michael/Documents/prace/ovladani_dronu&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -73,16 +70,41 @@
       <workItem from="1756201984946" duration="29000" />
       <workItem from="1756202443383" duration="893000" />
       <workItem from="1756215828525" duration="2047000" />
-      <workItem from="1756318036693" duration="6013000" />
+      <workItem from="1756318036693" duration="6202000" />
+      <workItem from="1756360485385" duration="3452000" />
+      <workItem from="1756370575059" duration="8429000" />
+      <workItem from="1756412023490" duration="3483000" />
     </task>
+    <task id="LOCAL-00001" summary="predelani kdz tam ode mne nejsou tridy, pristava uz a yacatek hlavni smycky">
+      <option name="closed" value="true" />
+      <created>1756325852500</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1756325852500</updated>
+    </task>
+    <task id="LOCAL-00002" summary="konttrae a hlavni cyklus, asi by to i melo byt, ted jen zprovoznit ten dron">
+      <option name="closed" value="true" />
+      <created>1756385063487</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1756385063487</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="predelani kdz tam ode mne nejsou tridy, pristava uz a yacatek hlavni smycky" />
+    <MESSAGE value="konttrae a hlavni cyklus, asi by to i melo byt, ted jen zprovoznit ten dron" />
+    <option name="LAST_COMMIT_MESSAGE" value="konttrae a hlavni cyklus, asi by to i melo byt, ted jen zprovoznit ten dron" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ovladani_dronu$drone_controller.coverage" NAME="drone_controller Coverage Results" MODIFIED="1756319289470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ovladani_dronu$qr_reader.coverage" NAME="qr_reader Coverage Results" MODIFIED="1756322156011" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ovladani_dronu$main.coverage" NAME="main Coverage Results" MODIFIED="1756319879478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ovladani_dronu$drone_controller.coverage" NAME="drone_controller Coverage Results" MODIFIED="1756383006814" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ovladani_dronu$main.coverage" NAME="main Coverage Results" MODIFIED="1756416393401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

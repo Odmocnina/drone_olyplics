@@ -5,9 +5,9 @@ from djitellopy import Tello, TelloException
 if __name__ == "__main__":
     tello = Tello()
     try:
+        tello.connect()
+        print("Baterie: " + str(tello.get_battery()))
         drone_controller.fly(20, tello)
-        time.sleep(3)
-        tello.move_up(20)
         print("Drone started")
         time.sleep(5)  # visení
         tello.land()
