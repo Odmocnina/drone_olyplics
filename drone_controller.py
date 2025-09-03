@@ -67,7 +67,7 @@ def fly(height, tello):
          # a pokud se neco pokazi, tak to vlze do except bloku, kde POKUD SE VZJIMKA SCHODUJE, tak se provede kod v
          # except bloku
         tello.takeoff()
-        time.sleep(3)
+        time.sleep(6)
         tello.move_up(height)
     except TelloException as e: # jaka vyjimka se muze chytit je definovano zde. TrelloException je vzjimka y dronu,
                                 # pokud se neco pokazi s dronem tak to vleye do tutoho bloku, pokud by se stala jinaci
