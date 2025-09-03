@@ -36,3 +36,30 @@ def read(img, draw=True, show=False, window_name="QR"):
         cv2.destroyAllWindows()
 
     return data # vystup z funkce, vrati prectene data
+    
+def detect_qr_pose(frame):
+    if frame is None:
+        return None, None, 0.0, None
+
+    if len(frame.shape) == 3:
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = frame
+
+    detector = cv2.QRCodeDetector()
+    data, bbox, _ = detector.detectAndDecode(gray)
+
+    if bbox is None:
+        return None, None, 0.0, None
+
+    pts = bbox.reshape(-1, 2).astype(np.float32)
+    cx, cy = pts.mean(axis=0)
+    area_qr = cv2.contourArea(pts)
+    h, w = gray.shape[:2]
+    coverage = (area_qr / float(w * h)) * 100.0 if w > 0 and h > 0 else 0.0
+
+    return (data if data != "" else None), (float(cx), float(cy)), float(coverage), pts
+
+def qr_coverage_percent(frame) -> float:
+    data, _, cov, _ = detect_qr_pose(frame)
+    return cov
