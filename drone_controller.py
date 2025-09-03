@@ -165,7 +165,7 @@ def forward_and_scan_qr(tello: Tello, frame_reader, length_cm: int, scan_timeout
                 ended = True
                 break
             if data == "VPRAVO":
-                move_forward(tello, 100)
+                move_forward(tello, 200)
             # krátká pauza po akci (např. otočka), ať se stabilizuje
             time.sleep(1.0)
 
