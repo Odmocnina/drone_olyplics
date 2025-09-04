@@ -160,14 +160,22 @@ def turn_left(tello):
 # tello - instance dronu
 def land(tello):
     tello.land()
-    
+
+# Funkce pro posun dronu dopredu
+# param:
+# tello - instance dronu
+# length - vzdalenost v cm
 def move_forward(tello, length):
     try:
         tello.move_forward(length)
         print(f"Dron se posunul dopředu o {length} cm.")
     except Exception as e:
         print(f"Chyba při posunu dopředu: {e}")
-        
+
+# Funkce pro posun dronu dozadu
+# param:
+# tello - instance dronu
+# length - vzdalenost v cm
 def move_back(tello, length):
     try:
         tello.move_back(length)
@@ -175,16 +183,16 @@ def move_back(tello, length):
     except Exception as e:
         print(f"Chyba při posunu dozadu: {e}")
         
-# Funkce: let dopředu a pokus o načtení QR před dronem
+# Funkce pro let dronu dopredu s intervalovym skenovanim QR kodu, dron leti o urcitou vzdalenost, pak se pokusi
+# naskenovat QR kod, pokud ho najde, pokusi se na nej zareagovat, pokud pristane, vrati True, jinak False, testovaci fce
 # param:
-#   tello - instance dronu Tello
-#   frame_reader - objekt z tello.get_frame_read(), poskytuje aktuální snímek v .frame
-#   length_cm - vzdálenost v cm, o kterou má dron popoletět dopředu
-#   scan_timeout_s - kolik sekund po doletu zkoušet detekovat QR
-#   sleep_step_s - pauza mezi čtením frame (šetrnější k CPU)
+# tello - instance dronu
+# frame_reader - instance pro cteni snimku z kamery dronu
+# length_cm - delka letu v cm
+# scan_timeout_s - maximalni doba pokusu o nacteni QR kodu po letu v sekundach, v zaklade 6s
+# sleep_step_s - pauza mezi cteni snimku, v zaklade 0.05s
 # return:
-#   True  -> pokud se během čtení QR provedl příkaz, který misi ukončil (např. přistání)
-#   False -> pokud QR nebyl nalezen / neukončil misi
+# True pokud dron pristal, jinak False
 def forward_and_scan_qr(tello: Tello, frame_reader, length_cm: int, scan_timeout_s: float = 6.0, sleep_step_s: float = 0.05) -> bool:
     try:
         tello.move_forward(int(length_cm))
@@ -222,28 +230,39 @@ def forward_and_scan_qr(tello: Tello, frame_reader, length_cm: int, scan_timeout
         time.sleep(sleep_step_s)
 
     return ended
-    
+
+# Funkce pro vycentrovani dronu na QR kod, pouyita abz se dronpo ceste na yaklde chzb pri letu nestratil, funguje to ok,
+# akorat to zere vic jak stado krav
+# param:
+# tello - instance dronu
+# frame_reader - instance pro cteni snimku z kamery dronu
+# timeout_s - maximalni doba pokusu o vycentrovani v sekundach, v zaklade 10s
+# deadband_px - tolerancni pasmo v pixelech (pokud je QR uvnitr, nic se nedeje), v zaklade 30px
+# k_yaw_deg_per_px - prevodova konstanta pro yaw (stupne na pixel), v zaklade 0.05 deg/px
+# k_vert_cm_per_px - prevodova konstanta pro vertikalni posun (cm na pixel), v zaklade 0.05 cm/px
 def center_on_qr(tello, frame_reader,
                  timeout_s=10.0,
                  deadband_px=30,         # tolerance středu v pixelech
-                 k_yaw_deg_per_px=0.05,  # převod pixel -> stupně yaw
-                 k_vert_cm_per_px=0.05   # převod pixel -> cm nahoru/dolů
+                 k_yaw_deg_per_px=0.05,  # prevod pixel -> stupne yaw
+                 k_vert_cm_per_px=0.05   # prevod pixel -> cm nahoru/dolů
                  ):
     """Pokusí se vycentrovat QR do středu obrazu. Vrací True/False podle úspěchu."""
     t_end = time.time() + timeout_s
     while time.time() < t_end:
         frame = getattr(frame_reader, "frame", None)
-        if frame is None:
-            time.sleep(0.05); continue
+        if frame is None: # kamera se pokazila nebo tak neco, tohle by se asi stat nemelo
+            time.sleep(0.05)
+            continue
 
         data, center, _, _ = qr_reader.detect_qr_pose(frame)
-        if center is None:  # QR není ve frame
-            time.sleep(0.05); continue
+        if center is None:  # QR neni v snimku
+            time.sleep(0.05)
+            continue
 
         h, w = frame.shape[:2]
         cx, cy = center
         ex = cx - (w / 2.0)   # + vpravo
-        ey = cy - (h / 2.0)   # + dolů
+        ey = cy - (h / 2.0)   # + dolu
 
         did = False
         # yaw
@@ -251,7 +270,7 @@ def center_on_qr(tello, frame_reader,
             yaw = int(max(5, min(25, abs(ex) * k_yaw_deg_per_px)))
             tello.rotate_clockwise(yaw if ex > 0 else -yaw)
             did = True
-        # výška
+        # vyska
         if abs(ey) > deadband_px:
             dz = int(max(20, min(40, abs(ey) * k_vert_cm_per_px)))
             if ey > 0: 
@@ -265,8 +284,20 @@ def center_on_qr(tello, frame_reader,
         time.sleep(0.3)   # stabilizace
     return False
 
+# Funkce pro opakovany let s intervalovym skenovanim QR kodu, dron leti po krocich podiva se jestli vidi qr kod, jestli
+# ho vidi tak se snazi vycentrovat, pokud je dostatecne blizko qr kodu (urcuje podle toho kolik zabira na obraze), qr
+# precte a podle toho reaguje
+# param:
+# tello - instance dronu
+# frame_reader - instance pro cteni snimku z kamery dronu
+# step_cm - delka kroku v cm, v zaklade 20cm
+# min_cov_pct - minimalni pokryti obrazu qr kodem v procentech, aby se pokusil o precteni, v zaklade 30%
+# max_steps - maximalni pocet kroku, v zaklade 200
+# sleep_step_s - pauza mezi cteni snimku, v zaklade 0.06s
+# post_action_cooldown_s - pauza po provedeni akce (napr. otocka), v zaklade 1s
+# min_height - minimalni vyska dronu v cm, pod tuto vysku dron pristane, v zaklade 60cm
 def interval_scan_loop(tello, frame_reader,
-                       step_cm=10,
+                       step_cm=20,
                        min_cov_pct=30.0,
                        max_steps=200,
                        sleep_step_s=0.06,
@@ -275,10 +306,10 @@ def interval_scan_loop(tello, frame_reader,
     last_cmd = None
     last_seen_time = 0.0
     cooldown_s = 1.5
-    i = 0
+    sleep_between_steps = 0.25
+    time_for_scanning_qr_code = 2.0
 
     for _ in range(int(max_steps)):
-        i = i + 1
         try:
             tello.move_forward(int(step_cm))
             print(f"[KROK] +{int(step_cm)} cm vpřed")
@@ -286,7 +317,7 @@ def interval_scan_loop(tello, frame_reader,
             print(f"[KROK] Chyba letu: {e}")
 
         # krátká stabilizace obrazu po pohybu
-        time.sleep(0.25)
+        time.sleep(sleep_between_steps)
         
         height = tello.get_height()
         print(f"[KROK] +{int(height)} cm v vzduchu")
@@ -294,24 +325,23 @@ def interval_scan_loop(tello, frame_reader,
             print("[KROK] Moc nizko, pristavam")
             break
 
-        # skenuj pár sekund, ale stačí i krátké okno, QR je blízko
-        deadline = time.time() + 2.0
-        while time.time() < deadline:
+        deadline = time.time() + time_for_scanning_qr_code
+        while time.time() < deadline: # cas na cteni qr, qr totiz neni vetsinou nacteny hned
             frame = getattr(frame_reader, "frame", None)
-            if frame is None:
+            if frame is None: # tuto by bylo hodne divny kdyby se stalo, nejak asi kamera kdyby se pokazila
                 print("[Kamera] Snimek nebyl nacten")
                 time.sleep(sleep_step_s); 
                 continue
 
             data, center, cov, _ = qr_reader.detect_qr_pose(frame)
-            # není QR -> pokračuj ve skenování (nebo nový krok po vypršení deadline)
+            # na obrazku nebyl nalzen QR, krokuj dal
             if center is None:
                 print("[QR] Nebyl nalezen QR v snimku")
                 time.sleep(sleep_step_s); 
                 continue
                 
             
-            centered = center_on_qr(tello, frame_reader, timeout_s=2.5)
+            centered = center_on_qr(tello, frame_reader, timeout_s=2.5) # pokus se vycentrovat dron, aby se nestratil
             if not centered:
                 print("[QR] Nepodařilo se přesně vycentrovat (pokračuji).")
             else:
@@ -319,27 +349,27 @@ def interval_scan_loop(tello, frame_reader,
 
             print(f"[QR] coverage ~ {cov:.1f}%")
             if cov < float(min_cov_pct):
-                # QR je ještě malý -> po deadline uděláme další krok vpřed
+                # qr sice na obrazku je ale neni dostatecne blizko
                 time.sleep(sleep_step_s); 
                 continue
 
-            # přečti text a proveď
+            # prevedeni obrazku na numpy pole a pokus o precteni qr
             gray = qr_reader.img_to_np_array(frame)
             txt = qr_reader.read(gray, draw=False, show=False)
 
             if not txt:
-                # někdy decode selže i když bbox je; zkus další frame v okně
+                # neslo precist qr
                 time.sleep(sleep_step_s); 
                 continue
 
             cmd = txt.strip().lower()
-            # anti-double trigger
+            # anti-double trigger, jinak to z nejakyho duvodu provede stejny prikaz 2x
             if last_cmd == cmd and (time.time() - last_seen_time) < cooldown_s:
                 time.sleep(sleep_step_s); 
                 continue
 
             print(f"[QR] obsah: {cmd}")
-            reaction = react_to_qr(tello, txt)
+            reaction = react_to_qr(tello, txt) # zareaguj na qr
             last_cmd = cmd
             last_seen_time = time.time()
 
@@ -347,8 +377,8 @@ def interval_scan_loop(tello, frame_reader,
                 print("[Mise] Přistáno podle QR – konec.")
                 return
 
-            # po provedení akce dej chvilku na stabilizaci a skoč na další krok
+            # pockame chvili po akci
             time.sleep(post_action_cooldown_s)
-            break  # ukonči vnitřní sken a pokračuj dalším krokem
+            break  # zkusime dalsi krok, ukocime cteni qr
 
     print("[Mise] Konec smyčky (max_steps vyčerpáno).")

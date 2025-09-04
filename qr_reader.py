@@ -36,30 +36,44 @@ def read(img, draw=True, show=False, window_name="QR"):
         cv2.destroyAllWindows()
 
     return data # vystup z funkce, vrati prectene data
-    
+
+# Funkce pro detekci QR kodu a jeho pozice ve snimku
+# param:
+# frame - snimek (obrazek)
+# return:
+# data - prectena data z QR kodu nebo None
+# center - stred QR kodu jako (x, y) nebo None
+# coverage - procentualni pokryti QR kodu ve snimku jako float
+# pts - body ohraniceni QR kodu jako numpy array nebo None
 def detect_qr_pose(frame):
     if frame is None:
         return None, None, 0.0, None
 
-    if len(frame.shape) == 3:
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    if len(frame.shape) == 3: # kontrola jestli je frame barevny
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # prevod na sedy
     else:
         gray = frame
 
-    detector = cv2.QRCodeDetector()
-    data, bbox, _ = detector.detectAndDecode(gray)
+    detector = cv2.QRCodeDetector() # inicializace detektoru
+    data, bbox, _ = detector.detectAndDecode(gray) # detekce a dekodovani QR kodu
 
     if bbox is None:
         return None, None, 0.0, None
 
-    pts = bbox.reshape(-1, 2).astype(np.float32)
-    cx, cy = pts.mean(axis=0)
-    area_qr = cv2.contourArea(pts)
-    h, w = gray.shape[:2]
-    coverage = (area_qr / float(w * h)) * 100.0 if w > 0 and h > 0 else 0.0
+    pts = bbox.reshape(-1, 2).astype(np.float32) # body ohraniceni QR kodu
+    cx, cy = pts.mean(axis=0) # stred QR kodu
+    area_qr = cv2.contourArea(pts) # plocha QR kodu
+    h, w = gray.shape[:2] # w je sirka, h je vyska
+    coverage = (area_qr / float(w * h)) * 100.0 if w > 0 and h > 0 else 0.0 # jestli vyska a sirka neni 0, tak
+    # vzpocitane procento pokryti, jinak 0
 
-    return (data if data != "" else None), (float(cx), float(cy)), float(coverage), pts
+    return (data if data != "" else None), (float(cx), float(cy)), float(coverage), pts # vraceni hodnot
 
+# Funkce pro ziskani procentualniho pokryti QR kodu ve snimku
+# param:
+# frame - snimek (obrazek)
+# return:
+# coverage - procentualni pokryti QR kodu ve snimku jako float
 def qr_coverage_percent(frame) -> float:
     data, _, cov, _ = detect_qr_pose(frame)
     return cov
