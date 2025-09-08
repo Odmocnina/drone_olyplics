@@ -23,14 +23,14 @@ def read(img, draw=True, show=False, window_name="QR"):
     detector = cv2.QRCodeDetector() # magie s cv2 knivnou, co mi neni rovno po tom je mi hovno
     data, bbox, straight = detector.detectAndDecode(img)
 
-    if bbox is not None and draw: # vzkreseleni qr kodu jestli chceme
-        pts = bbox.astype(np.int32)  # převod na int
+    if bbox is not None and draw: # vykreseleni qr kodu jestli chceme
+        pts = bbox.astype(np.int32)  # prevod na int
         cv2.polylines(img, [pts], isClosed=True, color=(255, 0, 0), thickness=2) # co tuto je
 
     if data: # vzprnteni precteneho obsahu qr kodu
-        print(f"Decoded Data: {data}")
+        print(f"[QR] Decoded Data: {data}")
 
-    if show: # zobrayeni snimku jestli chceme
+    if show: # zobrazeni snimku jestli chceme
         cv2.imshow(window_name, img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
