@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8a2ff75a-0bae-40db-b097-df8b95749d4c" name="Changes" comment="konttrae a hlavni cyklus, asi by to i melo byt, ted jen zprovoznit ten dron">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drone_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/drone_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/qr_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/qr_reader.py" afterDir="false" />
-    </list>
+    <list default="true" id="8a2ff75a-0bae-40db-b097-df8b95749d4c" name="Changes" comment="komentare" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -75,7 +71,7 @@
       <workItem from="1756370575059" duration="8429000" />
       <workItem from="1756412023490" duration="3483000" />
       <workItem from="1756882090831" duration="20000" />
-      <workItem from="1756970042901" duration="1931000" />
+      <workItem from="1756970042901" duration="1968000" />
     </task>
     <task id="LOCAL-00001" summary="predelani kdz tam ode mne nejsou tridy, pristava uz a yacatek hlavni smycky">
       <option name="closed" value="true" />
@@ -93,7 +89,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756385063487</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="komentare">
+      <option name="closed" value="true" />
+      <created>1756971995861</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1756971995861</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -102,7 +106,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="predelani kdz tam ode mne nejsou tridy, pristava uz a yacatek hlavni smycky" />
     <MESSAGE value="konttrae a hlavni cyklus, asi by to i melo byt, ted jen zprovoznit ten dron" />
-    <option name="LAST_COMMIT_MESSAGE" value="konttrae a hlavni cyklus, asi by to i melo byt, ted jen zprovoznit ten dron" />
+    <MESSAGE value="komentare" />
+    <option name="LAST_COMMIT_MESSAGE" value="komentare" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ovladani_dronu$qr_reader.coverage" NAME="qr_reader Coverage Results" MODIFIED="1756322156011" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
